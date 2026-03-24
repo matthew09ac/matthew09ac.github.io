@@ -1,22 +1,23 @@
-# 日语学习工具
+# 日语学习工具（Section 版）
 
-这是一个可以直接上传到 GitHub Pages 的静态网站版本。
+## 这版怎么改了
+- 去掉“今日学习”
+- 改成按 **100 词 = 1 个 Section**
+- 你现在的词表共 **4379** 词
+- 自动分成 **44** 个 Section
+- 保留“练动词”模块
 
-## 文件说明
-- `index.html`：主页面
-- `styles.css`：样式
-- `app.js`：逻辑
-- `words-data.js`：外置词库数据（当前约 4379 词）
-- `verbs-data.js`：100 个常用动词
+## 文件
+- index.html
+- styles.css
+- app.js
+- sections-data.js
+- verbs-data.js
 
 ## 上传到 GitHub
-1. 新建一个公开仓库
-2. 把这 5 个文件全部上传到仓库根目录
-3. 在 Settings -> Pages 里开启 GitHub Pages
-4. Source 选 `Deploy from a branch`
-5. Branch 选 `main`，目录选 `/root`
+1. 把仓库里旧的前端文件删掉
+2. 上传这 5 个文件到仓库根目录
+3. 等 GitHub Pages 刷新
 
-## 说明
-- 词库已经外置，不再把所有数据塞进一个 HTML 里
-- 词库页默认只显示前 120 个，靠搜索查看更多，避免卡顿
-- 自定义词库保存在浏览器本地
+你的地址会是：
+https://matthew09ac.github.io/

@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <title>日语学习工具</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page">
+    <header class="top">
+      <h1 class="title">日语学习工具</h1>
+      <p class="sub">分 Section 背单词 + 常用动词训练</p>
+    </header>
+
+    <div class="main-switch">
+      <button id="switch-vocab" class="active">背单词</button>
+      <button id="switch-verb">练动词</button>
+    </div>
+
+    <section id="panel-vocab">
+      <div class="card">
+        <div class="section-toolbar">
+          <div class="toolbar-title" id="section-summary">共 0 个 Section</div>
+          <div class="toolbar-actions">
+            <button id="order-btn" class="small-btn active">顺序</button>
+            <button id="random-btn" class="small-btn">随机</button>
+          </div>
+        </div>
+        <div id="section-list" class="section-grid"></div>
+      </div>
+
+      <div class="card hidden" id="study-card">
+        <div class="study-top">
+          <span class="badge" id="current-section-badge">Section 1</span>
+          <span class="small-text" id="progress-text">1 / 100</span>
+        </div>
+        <div class="word" id="study-word">単語</div>
+        <div class="reading" id="study-reading">たんご</div>
+        <div class="meaning" id="study-meaning"></div>
+        <div class="study-actions">
+          <button id="show-meaning-btn" class="primary">显示意思</button>
+          <button id="next-word-btn">下一题</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="panel-verb" class="hidden">
+      <div class="card">
+        <div class="form-row" id="verb-form-row"></div>
+        <div class="study-top">
+          <span class="badge" id="verb-form-badge">当前：ます形</span>
+          <span class="small-text" id="verb-progress">1 / 40</span>
+        </div>
+        <div class="word" id="verb-base">書く</div>
+        <div class="reading" id="verb-reading">かく · 一类动词</div>
+        <div class="question" id="verb-question">请把 書く 变成 ます形。</div>
+        <input id="verb-input" class="answer-input" placeholder="输入答案，例如：書きます / かきます" />
+        <div class="study-actions">
+          <button id="verb-submit-btn" class="primary">提交</button>
+          <button id="verb-next-btn">下一题</button>
+        </div>
+        <div class="feedback" id="verb-feedback">使用 100 个常用动词。支持按钮提交，也支持回车提交。</div>
+        <div class="study-actions three">
+          <button id="verb-show-btn">显示答案</button>
+          <button id="verb-review-btn">错题复习</button>
+          <button id="verb-reset-btn">清空成绩</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="stats-grid">
+          <div class="stat-box"><div class="num" id="verb-score">0</div><div class="label">得分</div></div>
+          <div class="stat-box"><div class="num" id="verb-streak">0</div><div class="label">连对</div></div>
+          <div class="stat-box"><div class="num" id="verb-acc">0%</div><div class="label">正确率</div></div>
+        </div>
+        <div class="history-list" id="verb-history"></div>
+      </div>
+    </section>
+
+    <p class="note">这个版本去掉“今日学习”，改成按 Section 刷词。你想刷哪组就刷哪组。</p>
+  </div>
+
+  <script src="sections-data.js"></script>
+  <script src="verbs-data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
