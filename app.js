@@ -1,40 +1,10 @@
 
-// ===== mode switch =====
 const switchVocab = document.getElementById("switch-vocab");
 const switchVerb = document.getElementById("switch-verb");
 const panelVocab = document.getElementById("panel-vocab");
 const panelVerb = document.getElementById("panel-verb");
-
-switchVocab.onclick = () => {
-  switchVocab.classList.add("active");
-  switchVerb.classList.remove("active");
-  panelVocab.classList.remove("hidden");
-  panelVerb.classList.add("hidden");
-};
-switchVerb.onclick = () => {
-  switchVerb.classList.add("active");
-  switchVocab.classList.remove("active");
-  panelVerb.classList.remove("hidden");
-  panelVocab.classList.add("hidden");
-};
-
-// ===== vocab by section =====
-let vocabMode = "order";
-let currentSectionIndex = -1;
-let currentWordIndex = -1;
-let currentWords = [];
-const sectionList = document.getElementById("section-list");
-const sectionSummary = document.getElementById("section-summary");
-const studyCard = document.getElementById("study-card");
-const currentSectionBadge = document.getElementById("current-section-badge");
-const progressText = document.getElementById("progress-text");
-const studyWord = document.getElementById("study-word");
-const studyReading = document.getElementById("study-reading");
-const studyMeaning = document.getElementById("study-meaning");
-const showMeaningBtn = document.getElementById("show-meaning-btn");
-const nextWordBtn = document.getElementById("next-word-btn");
-const orderBtn = document.getElementById("order-btn");
-const randomBtn = document.getElementById("random-btn");
+switchVocab.onclick = () => { switchVocab.classList.add("active"); switchVerb.classList.remove("active"); panelVocab.classList.remove("hidden"); panelVerb.classList.add("hidden"); };
+switchVerb.onclick = () => { switchVerb.classList.add("active"); switchVocab.classList.remove("active"); panelVerb.classList.remove("hidden"); panelVocab.classList.add("hidden"); };
 
 function shuffle(arr) {
   const a = arr.slice();
@@ -44,60 +14,161 @@ function shuffle(arr) {
   }
   return a;
 }
+
+// ===== vocab =====
+const sectionPage = document.getElementById("section-page");
+const actionPage = document.getElementById("section-action-page");
+const studyPage = document.getElementById("study-page");
+const sectionList = document.getElementById("section-list");
+const sectionSummary = document.getElementById("section-summary");
+const currentSectionBadge = document.getElementById("current-section-badge");
+const progressText = document.getElementById("progress-text");
+const studyReading = document.getElementById("study-reading");
+const studyWord = document.getElementById("study-word");
+const optionsEl = document.getElementById("options");
+const feedbackEl = document.getElementById("feedback");
+
+let currentSectionIndex = -1;
+let currentSection = null;
+let currentItems = [];
+let currentMode = "new"; // new, review, continue
+let currentPointer = 0;
+let currentAnswer = "";
+
+function loadVocabProgress() {
+  try { return JSON.parse(localStorage.getItem("section_vocab_progress_v1") || "{}"); }
+  catch (e) { return {}; }
+}
+function saveVocabProgress(data) {
+  localStorage.setItem("section_vocab_progress_v1", JSON.stringify(data));
+}
+function getSectionState(sectionId, total) {
+  const all = loadVocabProgress();
+  if (!all[sectionId]) all[sectionId] = { learned: [], nextNew: 0 };
+  if (!Array.isArray(all[sectionId].learned)) all[sectionId].learned = [];
+  if (typeof all[sectionId].nextNew !== "number") all[sectionId].nextNew = 0;
+  all[sectionId].learned = all[sectionId].learned.filter(i => i >= 0 && i < total);
+  saveVocabProgress(all);
+  return all[sectionId];
+}
+function updateSectionState(sectionId, updater) {
+  const all = loadVocabProgress();
+  if (!all[sectionId]) all[sectionId] = { learned: [], nextNew: 0 };
+  updater(all[sectionId]);
+  saveVocabProgress(all);
+}
 function renderSections() {
   sectionSummary.textContent = `共 ${SECTIONS.length} 个 Section · 每组 100 词左右`;
   sectionList.innerHTML = SECTIONS.map((sec, idx) => {
-    return `<button class="section-btn" data-index="${idx}">
-      <div><b>${sec.title}</b></div>
-      <div class="small-text">${sec.items.length} 词</div>
-    </button>`;
+    const st = getSectionState(sec.id, sec.items.length);
+    return `
+      <button class="section-btn" data-index="${idx}">
+        <div><b>${sec.title}</b></div>
+        <div class="small-text">已学 ${st.learned.length} / ${sec.items.length}</div>
+      </button>
+    `;
   }).join("");
-  Array.from(sectionList.querySelectorAll(".section-btn")).forEach(btn => {
-    btn.onclick = () => startSection(Number(btn.dataset.index));
-  });
+  Array.from(sectionList.querySelectorAll(".section-btn")).forEach(btn => btn.onclick = () => openSectionAction(Number(btn.dataset.index)));
 }
-function startSection(idx) {
+function openSectionAction(idx) {
   currentSectionIndex = idx;
-  const sec = SECTIONS[idx];
-  currentWords = vocabMode === "random" ? shuffle(sec.items) : sec.items.slice();
-  currentWordIndex = 0;
-  studyCard.classList.remove("hidden");
+  currentSection = SECTIONS[idx];
+  const st = getSectionState(currentSection.id, currentSection.items.length);
+  document.getElementById("action-section-badge").textContent = currentSection.title;
+  document.getElementById("action-status-meta").textContent = `进度 ${st.learned.length} / ${currentSection.items.length}`;
+  document.getElementById("action-status-title").textContent =
+    st.learned.length === 0 ? "你还没有开始学习这一组"
+    : st.learned.length >= currentSection.items.length ? "这一组已经全部学过了"
+    : `你已经学过 ${st.learned.length} 个词`;
+  document.getElementById("action-new-btn").disabled = st.nextNew >= currentSection.items.length;
+  document.getElementById("action-review-btn").disabled = st.learned.length === 0;
+  document.getElementById("action-continue-btn").disabled = st.nextNew >= currentSection.items.length;
+  sectionPage.classList.add("hidden");
+  studyPage.classList.add("hidden");
+  actionPage.classList.remove("hidden");
+}
+function enterStudy(mode) {
+  currentMode = mode;
+  const st = getSectionState(currentSection.id, currentSection.items.length);
+  if (mode === "new") {
+    const start = st.nextNew;
+    currentItems = currentSection.items.slice(start, Math.min(start + 100, currentSection.items.length)).map((item, i) => ({ item, originalIndex: start + i }));
+    currentPointer = 0;
+  } else if (mode === "continue") {
+    const start = st.nextNew;
+    currentItems = currentSection.items.slice(start).map((item, i) => ({ item, originalIndex: start + i }));
+    currentPointer = 0;
+  } else {
+    currentItems = st.learned.map(i => ({ item: currentSection.items[i], originalIndex: i }));
+    currentItems = shuffle(currentItems);
+    currentPointer = 0;
+  }
+  if (!currentItems.length) return;
+  actionPage.classList.add("hidden");
+  studyPage.classList.remove("hidden");
   renderCurrentWord();
+}
+function wrongOptions(correctItem, count=3) {
+  return shuffle(currentSection.items.filter(x => x.meaning !== correctItem.meaning)).slice(0, count).map(x => x.meaning);
 }
 function renderCurrentWord() {
-  if (currentSectionIndex < 0 || !currentWords.length) return;
-  if (currentWordIndex >= currentWords.length) currentWordIndex = 0;
-  const sec = SECTIONS[currentSectionIndex];
-  const w = currentWords[currentWordIndex];
-  currentSectionBadge.textContent = sec.title;
-  progressText.textContent = `${currentWordIndex + 1} / ${currentWords.length}`;
-  studyWord.textContent = w.word || "";
-  studyReading.textContent = w.reading || "";
-  studyMeaning.textContent = "";
+  if (!currentItems.length) return;
+  if (currentPointer >= currentItems.length) currentPointer = 0;
+  const { item } = currentItems[currentPointer];
+  currentSectionBadge.textContent = currentSection.title + " · " + (currentMode === "review" ? "复习" : "学习");
+  progressText.textContent = `${currentPointer + 1} / ${currentItems.length}`;
+  studyReading.textContent = item.reading || "";
+  studyWord.textContent = item.word || "（无汉字）";
+  currentAnswer = item.meaning;
+  const options = shuffle([item.meaning, ...wrongOptions(item, 3)]);
+  optionsEl.innerHTML = options.map(opt => `<button class="option" data-opt="${String(opt).replace(/"/g, '&quot;')}">${opt}</button>`).join("");
+  feedbackEl.textContent = "请选择正确中文意思。";
+  Array.from(optionsEl.querySelectorAll(".option")).forEach(btn => {
+    btn.onclick = () => {
+      const val = btn.dataset.opt;
+      Array.from(optionsEl.querySelectorAll(".option")).forEach(b => {
+        if (b.dataset.opt === currentAnswer) b.classList.add("correct");
+        if (b.dataset.opt === val && val !== currentAnswer) b.classList.add("wrong");
+        b.disabled = true;
+      });
+      feedbackEl.innerHTML = val === currentAnswer ? `✅ 正确：<b>${currentAnswer}</b>` : `❌ 正确答案：<b>${currentAnswer}</b>`;
+    };
+  });
 }
-function nextWord() {
-  if (currentSectionIndex < 0 || !currentWords.length) return;
-  currentWordIndex += 1;
-  if (currentWordIndex >= currentWords.length) currentWordIndex = 0;
+function markLearnedCurrent() {
+  if (!currentItems.length || !currentSection) return;
+  const originalIndex = currentItems[currentPointer].originalIndex;
+  updateSectionState(currentSection.id, st => {
+    if (!st.learned.includes(originalIndex)) st.learned.push(originalIndex);
+    if (currentMode !== "review" && originalIndex >= st.nextNew) st.nextNew = originalIndex + 1;
+    st.learned.sort((a,b)=>a-b);
+  });
+}
+document.getElementById("action-back-btn").onclick = () => {
+  actionPage.classList.add("hidden");
+  sectionPage.classList.remove("hidden");
+};
+document.getElementById("action-new-btn").onclick = () => enterStudy("new");
+document.getElementById("action-review-btn").onclick = () => enterStudy("review");
+document.getElementById("action-continue-btn").onclick = () => enterStudy("continue");
+document.getElementById("back-sections-btn").onclick = () => {
+  studyPage.classList.add("hidden");
+  actionPage.classList.remove("hidden");
+  renderSections();
+  openSectionAction(currentSectionIndex);
+};
+document.getElementById("next-word-btn").onclick = () => {
+  if (!currentItems.length) return;
+  markLearnedCurrent();
+  currentPointer += 1;
+  if (currentPointer >= currentItems.length) {
+    renderSections();
+    studyPage.classList.add("hidden");
+    actionPage.classList.remove("hidden");
+    openSectionAction(currentSectionIndex);
+    return;
+  }
   renderCurrentWord();
-}
-showMeaningBtn.onclick = () => {
-  if (currentSectionIndex < 0 || !currentWords.length) return;
-  const w = currentWords[currentWordIndex];
-  studyMeaning.textContent = w.meaning || "";
-};
-nextWordBtn.onclick = nextWord;
-orderBtn.onclick = () => {
-  vocabMode = "order";
-  orderBtn.classList.add("active");
-  randomBtn.classList.remove("active");
-  if (currentSectionIndex >= 0) startSection(currentSectionIndex);
-};
-randomBtn.onclick = () => {
-  vocabMode = "random";
-  randomBtn.classList.add("active");
-  orderBtn.classList.remove("active");
-  if (currentSectionIndex >= 0) startSection(currentSectionIndex);
 };
 
 renderSections();
@@ -126,7 +197,6 @@ const endings = {
   su:{i:"し",a:"さ",e:"せ",o:"そ"}, tsu:{i:"ち",a:"た",e:"て",o:"と"}, nu:{i:"に",a:"な",e:"ね",o:"の"},
   bu:{i:"び",a:"ば",e:"べ",o:"ぼ"}, mu:{i:"み",a:"ま",e:"め",o:"も"}, ru:{i:"り",a:"ら",e:"れ",o:"ろ"}
 };
-
 function classifyEnding(word) {
   const arr = ["する", "くる", "来る", "う", "く", "ぐ", "す", "つ", "ぬ", "ぶ", "む", "る"];
   for (const e of arr) if (word.endsWith(e)) return e;
@@ -231,24 +301,24 @@ function renderVerbHistory() {
   verbHistory.innerHTML = verbState.history.map(h => `<div class="history-item"><b>${h.base}</b> → ${h.target} · ${h.ok ? "正确" : "错误"}<br>你的答案：${h.your}<br>正确答案：${h.correct}</div>`).join("");
 }
 function saveVerbState() {
-  localStorage.setItem("verb_state_section_app", JSON.stringify({
+  localStorage.setItem("verb_state_final_v1", JSON.stringify({
     form: verbState.form, score: verbState.score, streak: verbState.streak, attempts: verbState.attempts, correct: verbState.correct, history: verbState.history
   }));
 }
 function loadVerbState() {
   try {
-    const s = JSON.parse(localStorage.getItem("verb_state_section_app") || "{}");
+    const s = JSON.parse(localStorage.getItem("verb_state_final_v1") || "{}");
     Object.assign(verbState, s);
   } catch (e) {}
 }
 function loadWrongVerbs() {
-  try { return JSON.parse(localStorage.getItem("wrong_verbs_section_app") || "[]"); }
+  try { return JSON.parse(localStorage.getItem("wrong_verbs_final_v1") || "[]"); }
   catch (e) { return []; }
 }
 function addWrongVerb(base) {
   let arr = loadWrongVerbs();
   if (!arr.includes(base)) arr.unshift(base);
-  localStorage.setItem("wrong_verbs_section_app", JSON.stringify(arr.slice(0, 50)));
+  localStorage.setItem("wrong_verbs_final_v1", JSON.stringify(arr.slice(0, 50)));
 }
 function submitVerb(showOnly=false) {
   if (!verbState.current) return;

@@ -10,8 +10,8 @@
 <body>
   <div class="page">
     <header class="top">
-      <h1 class="title">日语学习工具</h1>
-      <p class="sub">分 Section 背单词 + 常用动词训练</p>
+      <h1 class="title">让我们一起学日语</h1>
+      <p class="sub">Section 背单词 + 动词训练</p>
     </header>
 
     <div class="main-switch">
@@ -20,7 +20,7 @@
     </div>
 
     <section id="panel-vocab">
-      <div class="card">
+      <div id="section-page" class="card">
         <div class="section-toolbar">
           <div class="toolbar-title" id="section-summary">共 0 个 Section</div>
           <div class="toolbar-actions">
@@ -31,38 +31,57 @@
         <div id="section-list" class="section-grid"></div>
       </div>
 
-      <div class="card hidden" id="study-card">
+      <div id="section-action-page" class="card hidden">
         <div class="study-top">
-          <span class="badge" id="current-section-badge">Section 1</span>
-          <span class="small-text" id="progress-text">1 / 100</span>
+          <span class="badge" id="action-section-badge">Section 1</span>
+          <button id="action-back-btn" class="small-btn">返回</button>
         </div>
-        <div class="word" id="study-word">単語</div>
-        <div class="reading" id="study-reading">たんご</div>
-        <div class="meaning" id="study-meaning"></div>
-        <div class="study-actions">
-          <button id="show-meaning-btn" class="primary">显示意思</button>
-          <button id="next-word-btn">下一题</button>
+        <div class="section-action-box">
+          <div class="action-title" id="action-status-title">你还没有开始学习这一组</div>
+          <div class="action-meta" id="action-status-meta">进度 0 / 100</div>
+        </div>
+        <div class="row3">
+          <button id="action-new-btn" class="primary">学习新的</button>
+          <button id="action-review-btn">复习学过的</button>
+          <button id="action-continue-btn">继续学习</button>
+        </div>
+      </div>
+
+      <div id="study-page" class="hidden">
+        <div class="card">
+          <div class="study-top">
+            <span class="badge" id="current-section-badge">Section 1</span>
+            <span class="small-text" id="progress-text">1 / 100</span>
+          </div>
+          <div class="kana" id="study-reading">たんご</div>
+          <div class="kanji" id="study-word">漢字</div>
+          <div class="options" id="options"></div>
+          <div class="feedback" id="feedback">以读音为主，汉字为辅，选择正确中文意思。</div>
+          <div class="row2">
+            <button id="back-sections-btn">返回 Section</button>
+            <button id="next-word-btn" class="primary">下一题</button>
+          </div>
         </div>
       </div>
     </section>
 
     <section id="panel-verb" class="hidden">
       <div class="card">
-        <div class="form-row" id="verb-form-row"></div>
+        <div class="pillrow" id="verb-form-row"></div>
         <div class="study-top">
           <span class="badge" id="verb-form-badge">当前：ます形</span>
           <span class="small-text" id="verb-progress">1 / 40</span>
         </div>
-        <div class="word" id="verb-base">書く</div>
-        <div class="reading" id="verb-reading">かく · 一类动词</div>
+        <div class="kana" id="verb-base">書く</div>
+        <div class="kanji" id="verb-reading">かく · 一类动词</div>
         <div class="question" id="verb-question">请把 書く 变成 ます形。</div>
         <input id="verb-input" class="answer-input" placeholder="输入答案，例如：書きます / かきます" />
-        <div class="study-actions">
+        <div class="row2">
           <button id="verb-submit-btn" class="primary">提交</button>
           <button id="verb-next-btn">下一题</button>
         </div>
-        <div class="feedback" id="verb-feedback">使用 100 个常用动词。支持按钮提交，也支持回车提交。</div>
-        <div class="study-actions three">
+        <div class="feedback" id="verb-feedback">动词这里保留横向切换变形的 UI。</div>
+        <div class="row3">
           <button id="verb-show-btn">显示答案</button>
           <button id="verb-review-btn">错题复习</button>
           <button id="verb-reset-btn">清空成绩</button>
@@ -79,7 +98,7 @@
       </div>
     </section>
 
-    <p class="note">这个版本去掉“今日学习”，改成按 Section 刷词。你想刷哪组就刷哪组。</p>
+    <p class="note">背单词：选 Section 后可选择“学习新的 / 复习学过的 / 继续学习”。练动词：恢复横向切换变形。</p>
   </div>
 
   <script src="sections-data.js"></script>
