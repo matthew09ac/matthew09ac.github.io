@@ -1,113 +1,64 @@
 <!doctype html>
-<html lang="zh-CN">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <title>日语学习工具</title>
-  <link rel="stylesheet" href="styles.css" />
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>日语分区背词</title>
+<style>
+body{font-family:sans-serif;background:#f6efe6;margin:0;padding:20px}
+button{margin:5px;padding:10px;border-radius:10px}
+.card{background:white;padding:15px;border-radius:15px;margin-top:10px}
+</style>
 </head>
 <body>
-  <div class="page">
-    <header class="top">
-      <h1 class="title">日语学习工具</h1>
-      <p class="sub">背单词 + 练动词 · GitHub 可直接上传版</p>
-    </header>
 
-    <div class="switch">
-      <button id="btnVocab" class="active">背单词</button>
-      <button id="btnVerb">练动词</button>
-    </div>
+<h2>选择 Section</h2>
+<div id="sections"></div>
 
-    <section id="appVocab">
-      <div class="card">
-        <div class="stats">
-          <div class="stat"><div class="num" id="newCount">0</div><div class="lab">今日新词</div></div>
-          <div class="stat"><div class="num" id="reviewCount">0</div><div class="lab">待复习</div></div>
-          <div class="stat"><div class="num" id="learnedCount">0</div><div class="lab">已做过</div></div>
-          <div class="stat"><div class="num" id="totalCount">0</div><div class="lab">总词数</div></div>
-        </div>
+<div class="card" id="study" style="display:none">
+<h3 id="word"></h3>
+<p id="reading"></p>
+<button onclick="show()">显示意思</button>
+<p id="meaning"></p>
+<button onclick="next()">下一题</button>
+</div>
 
-        <div class="tabs">
-          <button id="vTabStudy" class="active">做题</button>
-          <button id="vTabList">词库</button>
-          <button id="vTabAdd">添加</button>
-        </div>
+<script src="data.js"></script>
+<script>
+let current = [];
+let index = 0;
 
-        <div id="vStudy">
-          <div class="badge" id="modeBadge">今日学习</div>
-          <div class="word" id="wordText">点击开始</div>
-          <div class="reading" id="readingText"></div>
-          <div class="box" id="exampleBox">先点“开始学习”</div>
-          <div class="options" id="options"></div>
-          <div class="feedback" id="feedback">大词库采用外置数据文件，页面会更稳。</div>
-          <div class="row2">
-            <button id="startBtn" class="primary">开始学习</button>
-            <button id="nextBtn">下一题</button>
-          </div>
-          <div class="row3">
-            <button id="againBtn">不会</button>
-            <button id="hardBtn">模糊</button>
-            <button id="goodBtn">会了</button>
-          </div>
-        </div>
+function loadSections(){
+  const el=document.getElementById("sections");
+  sections.forEach((s,i)=>{
+    const b=document.createElement("button");
+    b.innerText="Section "+(i+1);
+    b.onclick=()=>start(i);
+    el.appendChild(b);
+  });
+}
 
-        <div id="vList" class="hidden">
-          <input id="searchInput" placeholder="搜索单词 / 假名 / 中文" />
-          <div class="list" id="wordList"></div>
-        </div>
+function start(i){
+  current = sections[i];
+  index = 0;
+  document.getElementById("study").style.display="block";
+  next();
+}
 
-        <div id="vAdd" class="hidden">
-          <input id="addWord" placeholder="单词" />
-          <input id="addReading" placeholder="假名" />
-          <input id="addMeaning" placeholder="中文" />
-          <textarea id="addExample" placeholder="日语例句（可留空）"></textarea>
-          <textarea id="addExampleZh" placeholder="例句中文（可留空）"></textarea>
-          <div class="row2" style="margin-top:0;">
-            <button id="addBtn" class="primary">添加到词库</button>
-            <button id="exportBtn">导出自定义词库</button>
-          </div>
-          <input id="importInput" type="file" accept=".json" />
-          <p class="small">导入格式：JSON 数组，每项包含 word / reading / meaning / example / example_zh。</p>
-        </div>
-      </div>
-    </section>
+function next(){
+  if(index>=current.length) index=0;
+  const w=current[index++];
+  document.getElementById("word").innerText=w.word;
+  document.getElementById("reading").innerText=w.reading;
+  document.getElementById("meaning").innerText="";
+  window.cur=w;
+}
 
-    <section id="appVerb" class="hidden">
-      <div class="card">
-        <div class="stats">
-          <div class="stat"><div class="num" id="verbScore">0</div><div class="lab">得分</div></div>
-          <div class="stat"><div class="num" id="verbStreak">0</div><div class="lab">连对</div></div>
-          <div class="stat"><div class="num" id="verbProgress">0/0</div><div class="lab">进度</div></div>
-          <div class="stat"><div class="num" id="verbAcc">0%</div><div class="lab">正确率</div></div>
-        </div>
-        <div class="pillrow" id="formPicker"></div>
-        <div class="badge" id="verbBadge">当前：ます形</div>
-        <div class="word" id="verbBase">書く</div>
-        <div class="reading" id="verbRead">かく · 一类动词</div>
-        <div class="box" id="verbQuestion">请把 書く 变成 ます形。</div>
-        <input id="verbInput" placeholder="输入答案，例如：書きます / かきます" />
-        <div class="row2">
-          <button id="verbSubmit" class="primary">提交</button>
-          <button id="verbNext">下一题</button>
-        </div>
-        <div class="feedback" id="verbFeedback">只保留 100 个常用动词。</div>
-        <div class="row3">
-          <button id="verbShow">显示答案</button>
-          <button id="verbReview">错题复习</button>
-          <button id="verbReset">清空成绩</button>
-        </div>
-      </div>
-      <div class="card">
-        <div class="history" id="verbHistory"></div>
-      </div>
-    </section>
+function show(){
+  document.getElementById("meaning").innerText=window.cur.meaning;
+}
 
-    <p class="note">建议用 Safari 打开。上传到 GitHub Pages 后可直接用链接访问。</p>
-  </div>
-
-  <script src="words-data.js"></script>
-  <script src="verbs-data.js"></script>
-  <script src="app.js"></script>
+loadSections();
+</script>
 </body>
 </html>
