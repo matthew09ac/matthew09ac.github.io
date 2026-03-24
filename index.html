@@ -4,720 +4,110 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <title>让我们一起学日语 · 手机版</title>
-  <style>
-    :root{
-      --bg:#f6efe5;
-      --card:#fffaf4;
-      --card-2:#fff6ef;
-      --text:#4f3b2d;
-      --muted:#8f7764;
-      --accent:#d79cab;
-      --accent-2:#efc8d1;
-      --line:#e7d7c8;
-      --ok:#5f9b72;
-      --bad:#c96b74;
-      --shadow:0 10px 30px rgba(126,95,74,.12);
-      --radius:22px;
-      --safe-top: env(safe-area-inset-top, 0px);
-      --safe-bottom: env(safe-area-inset-bottom, 0px);
-    }
-    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Segoe UI",sans-serif}
-    body{
-      min-height:100vh;
-      background:
-        linear-gradient(180deg, rgba(246,239,229,.96), rgba(244,235,224,.98)),
-        radial-gradient(circle at 10% 12%, rgba(245,219,226,.55) 0 16px, transparent 17px),
-        radial-gradient(circle at 88% 8%, rgba(245,219,226,.35) 0 14px, transparent 15px),
-        linear-gradient(180deg, #f8f1e7 0%, #f4ebe0 100%);
-      overflow-x:hidden;
-    }
-    .page{
-      max-width:430px;
-      margin:0 auto;
-      min-height:100vh;
-      padding: calc(14px + var(--safe-top)) 14px calc(20px + var(--safe-bottom));
-      position:relative;
-    }
-
-    /* Sakura branches */
-    .page::before,.page::after{
-      content:"";
-      position:fixed;
-      top:0;
-      bottom:0;
-      width:38px;
-      pointer-events:none;
-      opacity:.23;
-      z-index:-1;
-      background-repeat:no-repeat;
-      background-size:100% 100%;
-    }
-    .page::before{
-      left:0;
-      background-image:
-        linear-gradient(180deg, transparent 0%, rgba(145,96,78,.24) 12%, rgba(145,96,78,.18) 88%, transparent 100%),
-        radial-gradient(circle at 28% 15%, rgba(234,188,199,.9) 0 6px, transparent 7px),
-        radial-gradient(circle at 44% 21%, rgba(248,222,229,.95) 0 7px, transparent 8px),
-        radial-gradient(circle at 30% 34%, rgba(234,188,199,.88) 0 6px, transparent 7px),
-        radial-gradient(circle at 46% 49%, rgba(248,222,229,.93) 0 7px, transparent 8px),
-        radial-gradient(circle at 31% 67%, rgba(234,188,199,.88) 0 6px, transparent 7px),
-        radial-gradient(circle at 42% 82%, rgba(248,222,229,.93) 0 7px, transparent 8px);
-      clip-path: polygon(40% 0, 52% 10%, 45% 20%, 58% 30%, 48% 42%, 60% 55%, 49% 68%, 58% 82%, 47% 100%, 28% 100%, 40% 82%, 32% 68%, 43% 55%, 31% 42%, 42% 30%, 30% 20%, 36% 10%);
-    }
-    .page::after{
-      right:0;
-      background-image:
-        linear-gradient(180deg, transparent 0%, rgba(145,96,78,.24) 12%, rgba(145,96,78,.18) 88%, transparent 100%),
-        radial-gradient(circle at 72% 15%, rgba(234,188,199,.9) 0 6px, transparent 7px),
-        radial-gradient(circle at 56% 21%, rgba(248,222,229,.95) 0 7px, transparent 8px),
-        radial-gradient(circle at 70% 34%, rgba(234,188,199,.88) 0 6px, transparent 7px),
-        radial-gradient(circle at 54% 49%, rgba(248,222,229,.93) 0 7px, transparent 8px),
-        radial-gradient(circle at 69% 67%, rgba(234,188,199,.88) 0 6px, transparent 7px),
-        radial-gradient(circle at 58% 82%, rgba(248,222,229,.93) 0 7px, transparent 8px);
-      clip-path: polygon(60% 0, 48% 10%, 55% 20%, 42% 30%, 52% 42%, 40% 55%, 51% 68%, 42% 82%, 53% 100%, 72% 100%, 60% 82%, 68% 68%, 57% 55%, 69% 42%, 58% 30%, 70% 20%, 64% 10%);
-    }
-
-    .top{
-      position:relative;
-      z-index:1;
-      text-align:center;
-      margin-bottom:12px;
-    }
-    .title{
-      font-size:26px;
-      font-weight:800;
-      letter-spacing:.01em;
-      margin:2px 0 4px;
-    }
-    .subtitle{
-      font-size:13px;
-      color:var(--muted);
-      margin-bottom:10px;
-    }
-
-    .pill-row{
-      display:flex;
-      gap:8px;
-      overflow:auto;
-      padding:2px 1px 4px;
-      scrollbar-width:none;
-      margin-bottom:12px;
-    }
-    .pill-row::-webkit-scrollbar{display:none}
-    .pill{
-      flex:0 0 auto;
-      border:none;
-      border-radius:999px;
-      padding:10px 14px;
-      font-size:14px;
-      background:rgba(255,250,244,.82);
-      color:var(--text);
-      border:1px solid var(--line);
-      box-shadow:0 2px 10px rgba(126,95,74,.05);
-    }
-    .pill.active{
-      background:linear-gradient(135deg, rgba(215,156,171,.24), rgba(239,200,209,.45));
-      border-color:#ddb5c0;
-      font-weight:700;
-    }
-
-    .stats{
-      position:relative;
-      z-index:1;
-      display:grid;
-      grid-template-columns:repeat(4,1fr);
-      gap:8px;
-      margin-bottom:12px;
-    }
-    .stat{
-      background:rgba(255,250,244,.9);
-      border:1px solid var(--line);
-      border-radius:18px;
-      padding:10px 8px;
-      text-align:center;
-      box-shadow:var(--shadow);
-    }
-    .stat .num{font-size:20px;font-weight:800;line-height:1.1}
-    .stat .label{font-size:11px;color:var(--muted);margin-top:3px}
-
-    .card{position:relative;z-index:2;
-      position:relative;
-      z-index:1;
-      background:rgba(255,250,244,.94);
-      border:1px solid var(--line);
-      border-radius:24px;
-      box-shadow:var(--shadow);
-      padding:16px;
-      margin-bottom:12px;
-    }
-    .badge{
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      padding:8px 12px;
-      background:rgba(215,156,171,.16);
-      border:1px solid #e4bcc5;
-      border-radius:999px;
-      font-size:13px;
-      color:var(--text);
-      margin-bottom:12px;
-    }
-    .verb{
-      font-size:42px;
-      font-weight:800;
-      line-height:1.1;
-      margin:4px 0 2px;
-      text-align:center;
-    }
-    .reading{
-      font-size:14px;
-      color:var(--muted);
-      text-align:center;
-      margin-bottom:12px;
-    }
-    .question{
-      text-align:center;
-      font-size:18px;
-      line-height:1.6;
-      margin-bottom:14px;
-      color:#473528;
-    }
-    .input{
-      width:100%;
-      border:none;
-      outline:none;
-      background:#fffdf9;
-      border:1px solid var(--line);
-      border-radius:18px;
-      padding:16px 16px;
-      font-size:18px;
-      color:var(--text);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.6);
-    }
-    .input::placeholder{color:#b09684}
-    .actions{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:10px;
-      margin-top:12px;
-    }
-    .btn{
-      border:none;
-      border-radius:18px;
-      padding:15px 14px;
-      font-size:16px;
-      font-weight:700;
-      color:var(--text);
-      background:#f8eee6;
-      border:1px solid var(--line);
-      box-shadow:0 6px 14px rgba(126,95,74,.08);
-    }
-    .btn.primary{
-      background:linear-gradient(135deg, #e8b8c5, #f2d5dd);
-    }
-    .btn:active{transform:scale(.985)}
-    .feedback{
-      margin-top:12px;
-      border-radius:18px;
-      border:1px dashed var(--line);
-      background:rgba(255,255,255,.35);
-      padding:14px;
-      font-size:14px;
-      line-height:1.7;
-      color:var(--muted);
-      min-height:78px;
-    }
-    .feedback.ok{
-      background:rgba(95,155,114,.09);
-      border-color:rgba(95,155,114,.28);
-      color:#486c53;
-    }
-    .feedback.bad{
-      background:rgba(201,107,116,.09);
-      border-color:rgba(201,107,116,.24);
-      color:#8c4d55;
-    }
-    .mini-actions{
-      display:grid;
-      grid-template-columns:1fr 1fr 1fr;
-      gap:8px;
-      margin-top:12px;
-    }
-    .btn.small{
-      padding:11px 10px;
-      font-size:13px;
-      font-weight:600;
-    }
-    .section-title{
-      font-size:13px;
-      color:var(--muted);
-      margin-bottom:8px;
-      letter-spacing:.04em;
-    }
-    .history{
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-      max-height:220px;
-      overflow:auto;
-      padding-right:2px;
-    }
-    .h-item{
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.55);
-      border-radius:16px;
-      padding:10px 12px;
-      font-size:13px;
-      line-height:1.5;
-    }
-    .ok-t{color:var(--ok);font-weight:700}
-    .bad-t{color:var(--bad);font-weight:700}
-    .bottom-note{
-      text-align:center;
-      color:var(--muted);
-      font-size:12px;
-      line-height:1.6;
-      margin-top:4px;
-    }
-  </style>
+  <title>日语学习工具</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <div class="page">
-    <div class="top">
-      <div class="title">让我们一起学日语</div>
-      <div class="subtitle">iPhone 友好版 · 一次只练一种变形</div>
+    <header class="top">
+      <h1 class="title">日语学习工具</h1>
+      <p class="sub">背单词 + 练动词 · GitHub 可直接上传版</p>
+    </header>
+
+    <div class="switch">
+      <button id="btnVocab" class="active">背单词</button>
+      <button id="btnVerb">练动词</button>
     </div>
 
-    <div class="pill-row" id="formPicker"></div>
-    <div class="pill-row" id="levelPicker"></div>
+    <section id="appVocab">
+      <div class="card">
+        <div class="stats">
+          <div class="stat"><div class="num" id="newCount">0</div><div class="lab">今日新词</div></div>
+          <div class="stat"><div class="num" id="reviewCount">0</div><div class="lab">待复习</div></div>
+          <div class="stat"><div class="num" id="learnedCount">0</div><div class="lab">已做过</div></div>
+          <div class="stat"><div class="num" id="totalCount">0</div><div class="lab">总词数</div></div>
+        </div>
 
-    <div class="stats">
-      <div class="stat"><div class="num" id="score">0</div><div class="label">得分</div></div>
-      <div class="stat"><div class="num" id="streak">0</div><div class="label">连对</div></div>
-      <div class="stat"><div class="num" id="progress">0/0</div><div class="label">进度</div></div>
-      <div class="stat"><div class="num" id="accuracy">0%</div><div class="label">正确率</div></div>
-    </div>
+        <div class="tabs">
+          <button id="vTabStudy" class="active">做题</button>
+          <button id="vTabList">词库</button>
+          <button id="vTabAdd">添加</button>
+        </div>
 
-    <div class="card">
-      <div class="badge" id="targetBadge">当前：ます形</div>
-      <div class="verb" id="verb">書く</div>
-      <div class="reading" id="reading">かく · 一类动词</div>
-      <div class="question" id="question">请把 <b>書く</b> 变成 <b>ます形</b>。</div>
-      <input id="answer" class="input" type="text" placeholder="输入答案，例如：書きます / かきます" autocomplete="off" />
-      <div class="actions">
-        <button class="btn primary" id="submitBtn">提交</button>
-        <button class="btn" id="nextBtn">下一题</button>
+        <div id="vStudy">
+          <div class="badge" id="modeBadge">今日学习</div>
+          <div class="word" id="wordText">点击开始</div>
+          <div class="reading" id="readingText"></div>
+          <div class="box" id="exampleBox">先点“开始学习”</div>
+          <div class="options" id="options"></div>
+          <div class="feedback" id="feedback">大词库采用外置数据文件，页面会更稳。</div>
+          <div class="row2">
+            <button id="startBtn" class="primary">开始学习</button>
+            <button id="nextBtn">下一题</button>
+          </div>
+          <div class="row3">
+            <button id="againBtn">不会</button>
+            <button id="hardBtn">模糊</button>
+            <button id="goodBtn">会了</button>
+          </div>
+        </div>
+
+        <div id="vList" class="hidden">
+          <input id="searchInput" placeholder="搜索单词 / 假名 / 中文" />
+          <div class="list" id="wordList"></div>
+        </div>
+
+        <div id="vAdd" class="hidden">
+          <input id="addWord" placeholder="单词" />
+          <input id="addReading" placeholder="假名" />
+          <input id="addMeaning" placeholder="中文" />
+          <textarea id="addExample" placeholder="日语例句（可留空）"></textarea>
+          <textarea id="addExampleZh" placeholder="例句中文（可留空）"></textarea>
+          <div class="row2" style="margin-top:0;">
+            <button id="addBtn" class="primary">添加到词库</button>
+            <button id="exportBtn">导出自定义词库</button>
+          </div>
+          <input id="importInput" type="file" accept=".json" />
+          <p class="small">导入格式：JSON 数组，每项包含 word / reading / meaning / example / example_zh。</p>
+        </div>
       </div>
-      <div class="feedback" id="feedback">准备好了就开始。支持按钮提交，也支持回车提交；输入法选字时回车不会触发提交。</div>
-      <div class="mini-actions">
-        <button class="btn small" id="showAnswerBtn">显示答案</button>
-        <button class="btn small" id="reviewBtn">错题复习</button>
-        <button class="btn small" id="resetBtn">清空成绩</button>
+    </section>
+
+    <section id="appVerb" class="hidden">
+      <div class="card">
+        <div class="stats">
+          <div class="stat"><div class="num" id="verbScore">0</div><div class="lab">得分</div></div>
+          <div class="stat"><div class="num" id="verbStreak">0</div><div class="lab">连对</div></div>
+          <div class="stat"><div class="num" id="verbProgress">0/0</div><div class="lab">进度</div></div>
+          <div class="stat"><div class="num" id="verbAcc">0%</div><div class="lab">正确率</div></div>
+        </div>
+        <div class="pillrow" id="formPicker"></div>
+        <div class="badge" id="verbBadge">当前：ます形</div>
+        <div class="word" id="verbBase">書く</div>
+        <div class="reading" id="verbRead">かく · 一类动词</div>
+        <div class="box" id="verbQuestion">请把 書く 变成 ます形。</div>
+        <input id="verbInput" placeholder="输入答案，例如：書きます / かきます" />
+        <div class="row2">
+          <button id="verbSubmit" class="primary">提交</button>
+          <button id="verbNext">下一题</button>
+        </div>
+        <div class="feedback" id="verbFeedback">只保留 100 个常用动词。</div>
+        <div class="row3">
+          <button id="verbShow">显示答案</button>
+          <button id="verbReview">错题复习</button>
+          <button id="verbReset">清空成绩</button>
+        </div>
       </div>
-    </div>
+      <div class="card">
+        <div class="history" id="verbHistory"></div>
+      </div>
+    </section>
 
-    <div class="card">
-      <div class="section-title">最近记录</div>
-      <div class="history" id="history"></div>
-    </div>
-
-    <div class="bottom-note">本地存档保存在当前浏览器里。iPhone 上建议用同一个浏览器反复打开。</div>
+    <p class="note">建议用 Safari 打开。上传到 GitHub Pages 后可直接用链接访问。</p>
   </div>
 
-<script>
-
-const verbs = [
-  {base:"書く", reading:"かく", group:"一类动词"},
-  {base:"聞く", reading:"きく", group:"一类动词"},
-  {base:"話す", reading:"はなす", group:"一类动词"},
-  {base:"読む", reading:"よむ", group:"一类动词"},
-  {base:"買う", reading:"かう", group:"一类动词"},
-  {base:"行く", reading:"いく", group:"一类动词"},
-  {base:"帰る", reading:"かえる", group:"一类动词"},
-  {base:"作る", reading:"つくる", group:"一类动词"},
-  {base:"使う", reading:"つかう", group:"一类动词"},
-  {base:"待つ", reading:"まつ", group:"一类动词"},
-  {base:"持つ", reading:"もつ", group:"一类动词"},
-  {base:"立つ", reading:"たつ", group:"一类动词"},
-  {base:"座る", reading:"すわる", group:"一类动词"},
-  {base:"入る", reading:"はいる", group:"一类动词"},
-  {base:"出る", reading:"でる", group:"二类动词"},
-  {base:"見る", reading:"みる", group:"二类动词"},
-  {base:"食べる", reading:"たべる", group:"二类动词"},
-  {base:"寝る", reading:"ねる", group:"二类动词"},
-  {base:"起きる", reading:"おきる", group:"二类动词"},
-  {base:"教える", reading:"おしえる", group:"二类动词"},
-  {base:"考える", reading:"かんがえる", group:"二类动词"},
-  {base:"調べる", reading:"しらべる", group:"二类动词"},
-  {base:"続ける", reading:"つづける", group:"二类动词"},
-  {base:"決める", reading:"きめる", group:"二类动词"},
-  {base:"借りる", reading:"かりる", group:"二类动词"},
-  {base:"着る", reading:"きる", group:"二类动词"},
-  {base:"信じる", reading:"しんじる", group:"二类动词"},
-  {base:"忘れる", reading:"わすれる", group:"二类动词"},
-  {base:"する", reading:"する", group:"三类动词"},
-  {base:"来る", reading:"くる", group:"三类动词"},
-  {base:"勉強する", reading:"べんきょうする", group:"三类动词"},
-  {base:"運動する", reading:"うんどうする", group:"三类动词"},
-  {base:"連絡する", reading:"れんらくする", group:"三类动词"},
-  {base:"確認する", reading:"かくにんする", group:"三类动词"},
-  {base:"説明する", reading:"せつめいする", group:"三类动词"},
-  {base:"利用する", reading:"りようする", group:"三类动词"}
-];
-
-
-const forms = [
-  {key:"masu", label:"ます形"},
-  {key:"nai", label:"ない形"},
-  {key:"te", label:"て形"},
-  {key:"ta", label:"た形"},
-  {key:"potential", label:"可能形"},
-  {key:"passive", label:"被动形"},
-  {key:"causative", label:"使役形"},
-  {key:"volitional", label:"意向形"},
-];
-const levels = [
-  {key:"n5", label:"N5"},
-  {key:"n4", label:"N4"},
-  {key:"n3", label:"N3"},
-  {key:"n2", label:"N2"},
-  {key:"all", label:"全部"},
-];
-const state = {
-  form:"masu", level:"n5", queue:[], index:0, score:0, streak:0, attempts:0, correct:0, history:[], current:null
-};
-
-const endings = {
-  u:{i:"い", a:"わ", e:"え", o:"お"},
-  ku:{i:"き", a:"か", e:"け", o:"こ"},
-  gu:{i:"ぎ", a:"が", e:"げ", o:"ご"},
-  su:{i:"し", a:"さ", e:"せ", o:"そ"},
-  tsu:{i:"ち", a:"た", e:"て", o:"と"},
-  nu:{i:"に", a:"な", e:"ね", o:"の"},
-  bu:{i:"び", a:"ば", e:"べ", o:"ぼ"},
-  mu:{i:"み", a:"ま", e:"め", o:"も"},
-  ru:{i:"り", a:"ら", e:"れ", o:"ろ"},
-};
-
-function classifyEnding(word){
-  const arr=["する","くる","来る","う","く","ぐ","す","つ","ぬ","ぶ","む","る"];
-  for(const e of arr){ if(word.endsWith(e)) return e; }
-  return "";
-}
-function kanaStemMap(base, targetCol){
-  const e=classifyEnding(base);
-  const mapKey={'う':'u','く':'ku','ぐ':'gu','す':'su','つ':'tsu','ぬ':'nu','ぶ':'bu','む':'mu','る':'ru'}[e];
-  if(!mapKey) return null;
-  return base.slice(0,-e.length)+endings[mapKey][targetCol];
-}
-function teTaGodan(base, kind){
-  if(base==="行く") return kind==="te" ? "行って" : "行った";
-  const e=classifyEnding(base), stem=base.slice(0,-1);
-  if(e==="う"||e==="つ"||e==="る") return stem+(kind==="te"?"って":"った");
-  if(e==="む"||e==="ぶ"||e==="ぬ") return stem+(kind==="te"?"んで":"んだ");
-  if(e==="く") return stem+(kind==="te"?"いて":"いた");
-  if(e==="ぐ") return stem+(kind==="te"?"いで":"いだ");
-  if(e==="す") return stem+(kind==="te"?"して":"した");
-  return base;
-}
-function irregularSuru(form){
-  return {masu:"します",nai:"しない",te:"して",ta:"した",potential:"できる",passive:"される",causative:"させる",volitional:"しよう"}[form];
-}
-function irregularKuru(form){
-  return {masu:"来ます",nai:"来ない",te:"来て",ta:"来た",potential:"来られる",passive:"来られる",causative:"来させる",volitional:"来よう"}[form];
-}
-function nounSuru(base, form){
-  const stem=base.slice(0,-2);
-  return {masu:stem+"します",nai:stem+"しない",te:stem+"して",ta:stem+"した",potential:stem+"できる",passive:stem+"される",causative:stem+"させる",volitional:stem+"しよう"}[form];
-}
-function ichidan(stem, form){
-  return {masu:stem+"ます",nai:stem+"ない",te:stem+"て",ta:stem+"た",potential:stem+"られる",passive:stem+"られる",causative:stem+"させる",volitional:stem+"よう"}[form];
-}
-function godan(base, form){
-  return {
-    masu:kanaStemMap(base,"i")+"ます",
-    nai:kanaStemMap(base,"a")+"ない",
-    te:teTaGodan(base,"te"),
-    ta:teTaGodan(base,"ta"),
-    potential:kanaStemMap(base,"e")+"る",
-    passive:kanaStemMap(base,"a")+"れる",
-    causative:kanaStemMap(base,"a")+"せる",
-    volitional:kanaStemMap(base,"o")+"う"
-  }[form];
-}
-function conjugate(v, form){
-  if(v.group==="三类动词"){
-    if(v.base==="する") return irregularSuru(form);
-    if(v.base==="来る") return irregularKuru(form);
-    if(v.base.endsWith("する")) return nounSuru(v.base, form);
-  }
-  if(v.group==="二类动词") return ichidan(v.base.slice(0,-1), form);
-  return godan(v.base, form);
-}
-function conjugateReading(reading, form){
-  if(reading==="する") return {masu:"します",nai:"しない",te:"して",ta:"した",potential:"できる",passive:"される",causative:"させる",volitional:"しよう"}[form];
-  if(reading==="くる") return {masu:"きます",nai:"こない",te:"きて",ta:"きた",potential:"こられる",passive:"こられる",causative:"こさせる",volitional:"こよう"}[form];
-  if(reading.endsWith("する")){
-    const stem = reading.slice(0,-2);
-    return {masu:stem+"します",nai:stem+"しない",te:stem+"して",ta:stem+"した",potential:stem+"できる",passive:stem+"される",causative:stem+"させる",volitional:stem+"しよう"}[form];
-  }
-  if(form==="masu"){
-    if(reading.endsWith("る") && !["かえる","はいる","かえる","はしる","しる","いる","きる","すべる","へる","つくる","おくる"].includes(reading)) return reading.slice(0,-1)+"ます";
-    return reading.replace(/.$/, c=>({"う":"い","く":"き","ぐ":"ぎ","す":"し","つ":"ち","ぬ":"に","ぶ":"び","む":"み","る":"り"}[c]||c))+"ます";
-  }
-  if(form==="nai"){
-    if(reading.endsWith("る") && !["かえる","はいる","かえる","はしる","しる","いる","きる","すべる","へる","つくる","おくる"].includes(reading)) return reading.slice(0,-1)+"ない";
-    return reading.replace(/.$/, c=>({"う":"わ","く":"か","ぐ":"が","す":"さ","つ":"た","ぬ":"な","ぶ":"ば","む":"ま","る":"ら"}[c]||c))+"ない";
-  }
-  if(form==="te"){
-    if(reading==="いく") return "いって";
-    if(reading.endsWith("る") && !["かえる","はいる","はしる","しる","いる","きる","すべる","へる","つくる","おくる"].includes(reading)) return reading.slice(0,-1)+"て";
-    if(/(う|つ|る)$/.test(reading)) return reading.slice(0,-1)+"って";
-    if(/(む|ぶ|ぬ)$/.test(reading)) return reading.slice(0,-1)+"んで";
-    if(reading.endsWith("く")) return reading.slice(0,-1)+"いて";
-    if(reading.endsWith("ぐ")) return reading.slice(0,-1)+"いで";
-    if(reading.endsWith("す")) return reading.slice(0,-1)+"して";
-  }
-  if(form==="ta"){
-    if(reading==="いく") return "いった";
-    if(reading.endsWith("る") && !["かえる","はいる","はしる","しる","いる","きる","すべる","へる","つくる","おくる"].includes(reading)) return reading.slice(0,-1)+"た";
-    if(/(う|つ|る)$/.test(reading)) return reading.slice(0,-1)+"った";
-    if(/(む|ぶ|ぬ)$/.test(reading)) return reading.slice(0,-1)+"んだ";
-    if(reading.endsWith("く")) return reading.slice(0,-1)+"いた";
-    if(reading.endsWith("ぐ")) return reading.slice(0,-1)+"いだ";
-    if(reading.endsWith("す")) return reading.slice(0,-1)+"した";
-  }
-  if(form==="potential"){
-    if(reading.endsWith("る") && !["かえる","はいる","はしる","しる","いる","きる","すべる","へる","つくる","おくる"].includes(reading)) return reading.slice(0,-1)+"られる";
-    return reading.replace(/.$/, c=>({"う":"え","く":"け","ぐ":"げ","す":"せ","つ":"て","ぬ":"ね","ぶ":"べ","む":"め","る":"れ"}[c]||c))+"る";
-  }
-  if(form==="passive"){
-    if(reading.endsWith("る") && !["かえる","はいる","はしる","しる","いる","きる","すべる","へる","つくる","おくる"].includes(reading)) return reading.slice(0,-1)+"られる";
-    return reading.replace(/.$/, c=>({"う":"わ","く":"か","ぐ":"が","す":"さ","つ":"た","ぬ":"な","ぶ":"ば","む":"ま","る":"ら"}[c]||c))+"れる";
-  }
-  if(form==="causative"){
-    if(reading.endsWith("る") && !["かえる","はいる","はしる","しる","いる","きる","すべる","へる","つくる","おくる"].includes(reading)) return reading.slice(0,-1)+"させる";
-    return reading.replace(/.$/, c=>({"う":"わ","く":"か","ぐ":"が","す":"さ","つ":"た","ぬ":"な","ぶ":"ば","む":"ま","る":"ら"}[c]||c))+"せる";
-  }
-  if(form==="volitional"){
-    if(reading.endsWith("る") && !["かえる","はいる","はしる","しる","いる","きる","すべる","へる","つくる","おくる"].includes(reading)) return reading.slice(0,-1)+"よう";
-    return reading.replace(/.$/, c=>({"う":"お","く":"こ","ぐ":"ご","す":"そ","つ":"と","ぬ":"の","ぶ":"ぼ","む":"も","る":"ろ"}[c]||c))+"う";
-  }
-  return reading;
-}
-function normalize(s){ return (s||"").replace(/\s+/g,"").trim(); }
-function isCorrect(user, correct, verb){
-  const u=normalize(user), c=normalize(correct);
-  if(u===c) return true;
-  return u===normalize(conjugateReading(verb.reading, state.form));
-}
-function explain(v, form){
-  if(v.group==="三类动词") return "这是三类动词或「名词 + する」类型的不规则变形。";
-  if(v.group==="二类动词") return "这是二类动词，去掉「る」后接对应形式。";
-  if(form==="te") return "一类动词て形：う/つ/る→って；む/ぶ/ぬ→んで；く→いて；ぐ→いで；す→して。";
-  if(form==="ta") return "一类动词た形：う/つ/る→った；む/ぶ/ぬ→んだ；く→いた；ぐ→いだ；す→した。";
-  if(form==="masu") return "一类动词把词尾从う段改成い段，再加「ます」。";
-  if(form==="nai") return "一类动词把词尾从う段改成あ段，再加「ない」；注意「う→わ」。";
-  if(form==="potential") return "一类动词把词尾从う段改成え段，再加「る」。";
-  if(form==="passive") return "一类动词把词尾从う段改成あ段，再加「れる」。";
-  if(form==="causative") return "一类动词把词尾从う段改成あ段，再加「せる」。";
-  if(form==="volitional") return "一类动词把词尾从う段改成お段，再加「う」。";
-  return "";
-}
-function formLabel(){ return forms.find(f=>f.key===state.form).label; }
-function levelBases(){
-  const n5=["書く","食べる","行く","見る","話す","寝る","読む","来る","する","買う"];
-  const n4=["待つ","遊ぶ","起きる","借りる","出る","入る","帰る","泳ぐ","立つ"];
-  const n3=["急ぐ","歌う","持つ","座る","走る","知る","要る","切る"];
-  const n2=["滑る","減る","作る","送る","笑う","洗う","手伝う","信じる","忘れる","続ける","比べる","受ける","開ける","閉める","勉強する","運動する","掃除する","心配する"];
-  if(state.level==="n5") return n5;
-  if(state.level==="n4") return n5.concat(n4);
-  if(state.level==="n3") return n5.concat(n4,n3);
-  if(state.level==="n2") return n5.concat(n4,n3,n2);
-  return verbs.map(v=>v.base);
-}
-function shuffle(arr){
-  const a=[...arr];
-  for(let i=a.length-1;i>0;i--){
-    const j=Math.floor(Math.random()*(i+1));
-    [a[i],a[j]]=[a[j],a[i]];
-  }
-  return a;
-}
-function buildSet(customQueue=null){
-  if(customQueue){
-    state.queue = customQueue;
-  }else{
-    const pool=verbs.filter(v=>levelBases().includes(v.base));
-    let out=shuffle(pool);
-    if(out.length>20) out=out.slice(0,20);
-    state.queue=out;
-  }
-  state.index=0;
-  state.current=state.queue[0] || null;
-  renderCurrent();
-  setFeedback("准备好了就开始。支持按钮提交，也支持回车提交；输入法选字时回车不会触发提交。");
-  saveState();
-}
-function renderPills(){
-  const fp=document.getElementById('formPicker');
-  fp.innerHTML=forms.map(f=>`<button class="pill ${f.key===state.form?'active':''}" data-form="${f.key}">${f.label}</button>`).join('');
-  fp.querySelectorAll('[data-form]').forEach(btn=>btn.onclick=()=>{ state.form=btn.dataset.form; renderPills(); renderCurrent(); saveState(); });
-
-  const lp=document.getElementById('levelPicker');
-  lp.innerHTML=levels.map(l=>`<button class="pill ${l.key===state.level?'active':''}" data-level="${l.key}">${l.label}</button>`).join('');
-  lp.querySelectorAll('[data-level]').forEach(btn=>btn.onclick=()=>{ state.level=btn.dataset.level; renderPills(); buildSet(); });
-}
-function renderCurrent(){
-  const v=state.current;
-  document.getElementById('targetBadge').textContent='当前：'+formLabel();
-  if(!v){
-    document.getElementById('verb').textContent='完成';
-    document.getElementById('reading').textContent='这组题目已结束';
-    document.getElementById('question').innerHTML='这一组做完了，切换等级或继续错题复习都可以。';
-    document.getElementById('answer').value='';
-    updateStats();
-    return;
-  }
-  document.getElementById('verb').textContent=v.base;
-  document.getElementById('reading').textContent=`${v.reading} · ${v.group}`;
-  document.getElementById('question').innerHTML=`请把 <b>${v.base}</b> 变成 <b>${formLabel()}</b>。`;
-  document.getElementById('answer').value='';
-  updateStats();
-}
-function setFeedback(text, cls=''){
-  const el=document.getElementById('feedback');
-  el.className='feedback'+(cls?(' '+cls):'');
-  el.innerHTML=text;
-}
-function updateStats(){
-  document.getElementById('score').textContent=state.score;
-  document.getElementById('streak').textContent=state.streak;
-  const total = state.queue.length || 0;
-  const cur = state.current ? Math.min(state.index+1,total) : total;
-  document.getElementById('progress').textContent=`${cur}/${total}`;
-  const acc = state.attempts ? Math.round(state.correct/state.attempts*100) : 0;
-  document.getElementById('accuracy').textContent=acc+'%';
-}
-function renderHistory(){
-  const el=document.getElementById('history');
-  if(!state.history.length){
-    el.innerHTML='<div class="h-item">还没有记录。做一题后，这里会显示最近结果。</div>';
-    return;
-  }
-  el.innerHTML = state.history.map(item=>`
-    <div class="h-item">
-      <div><b>${item.base}</b> → ${item.target} · <span class="${item.ok?'ok-t':'bad-t'}">${item.ok?'正确':'错误'}</span></div>
-      <div>你的答案：${item.your}</div>
-      <div>正确答案：${item.correct}</div>
-    </div>`).join('');
-}
-function getWrongPool(){
-  try{return JSON.parse(localStorage.getItem('jp_wrong_pool_mobile')||'[]')}catch(e){return []}
-}
-function saveWrongPool(pool){
-  localStorage.setItem('jp_wrong_pool_mobile', JSON.stringify(pool));
-}
-function addWrong(v, correct){
-  let pool=getWrongPool();
-  pool.unshift({base:v.base, correct, time:Date.now(), count:(pool.find(x=>x.base===v.base)?.count||0)+1});
-  const seen={};
-  pool=pool.filter(item=>{ if(seen[item.base]) return false; seen[item.base]=1; return true; });
-  if(pool.length>60) pool=pool.slice(0,60);
-  saveWrongPool(pool);
-}
-function submitAnswer(showOnly=false){
-  if(!state.current) return;
-  const ans=normalize(document.getElementById('answer').value);
-  const correct=conjugate(state.current, state.form);
-  if(showOnly){
-    setFeedback(`答案是：<b>${correct}</b><br><span style="color:var(--muted)">${explain(state.current, state.form)}</span>`);
-    return;
-  }
-  if(!ans){
-    setFeedback('先输入答案再提交。');
-    return;
-  }
-  state.attempts += 1;
-  const ok = isCorrect(ans, correct, state.current);
-  if(ok){
-    state.correct += 1;
-    state.score += 10;
-    state.streak += 1;
-    setFeedback(`✅ 正确：<b>${correct}</b><br><span style="color:var(--muted)">${explain(state.current, state.form)}<br>平假名答案也算正确。</span>`, 'ok');
-  }else{
-    state.streak = 0;
-    addWrong(state.current, correct);
-    setFeedback(`❌ 你的答案：<b>${ans}</b><br>正确答案：<b>${correct}</b><br><span style="color:var(--muted)">${explain(state.current, state.form)}</span>`, 'bad');
-  }
-  state.history.unshift({base:state.current.base, target:formLabel(), your:ans, correct, ok});
-  if(state.history.length>25) state.history.pop();
-  renderHistory();
-  updateStats();
-  saveState();
-}
-function nextQuestion(){
-  state.index += 1;
-  state.current = state.index < state.queue.length ? state.queue[state.index] : null;
-  renderCurrent();
-  if(state.current) setFeedback('下一题来了。');
-  else setFeedback('这一组做完了。可以继续新一轮，或者点“错题复习”。');
-  saveState();
-}
-function startReview(){
-  const pool = getWrongPool();
-  if(!pool.length){
-    setFeedback('现在还没有错题，可以先做几题再来复习。');
-    return;
-  }
-  const q = pool.map(p=>verbs.find(v=>v.base===p.base)).filter(Boolean);
-  buildSet(q);
-  setFeedback('已进入错题复习模式。');
-}
-function saveState(){
-  const data = {
-    form:state.form, level:state.level, score:state.score, streak:state.streak,
-    attempts:state.attempts, correct:state.correct, history:state.history
-  };
-  localStorage.setItem('jp_mobile_trainer_save', JSON.stringify(data));
-}
-function loadState(){
-  try{
-    const data = JSON.parse(localStorage.getItem('jp_mobile_trainer_save')||'{}');
-    Object.assign(state, data || {});
-  }catch(e){}
-}
-function resetAll(){
-  state.score=0; state.streak=0; state.attempts=0; state.correct=0; state.history=[];
-  renderHistory(); updateStats(); saveState();
-  setFeedback('成绩已清空，错题池保留。');
-}
-
-document.getElementById('submitBtn').onclick=()=>submitAnswer(false);
-document.getElementById('nextBtn').onclick=()=>nextQuestion();
-document.getElementById('showAnswerBtn').onclick=()=>submitAnswer(true);
-document.getElementById('reviewBtn').onclick=()=>startReview();
-document.getElementById('resetBtn').onclick=()=>resetAll();
-
-let isComposing=false;
-const answer=document.getElementById('answer');
-answer.addEventListener('compositionstart', ()=>{ isComposing=true; });
-answer.addEventListener('compositionend', ()=>{ isComposing=false; });
-answer.addEventListener('keydown', (e)=>{
-  if(e.key==='Enter'){
-    if(isComposing || e.isComposing || e.keyCode===229) return;
-    e.preventDefault();
-    submitAnswer(false);
-  }
-});
-
-loadState();
-renderPills();
-renderHistory();
-buildSet();
-</script>
+  <script src="words-data.js"></script>
+  <script src="verbs-data.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
